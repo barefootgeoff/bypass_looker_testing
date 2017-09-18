@@ -16,7 +16,7 @@ explore: orders {
   join: venues {
     type: left_outer
     sql_on: ${locations.venue_id} = ${venues.id} ;;
-    relationship: many_to_many
+    relationship: many_to_one
   }
   join: line_items {
     type: left_outer

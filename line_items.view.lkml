@@ -14,11 +14,13 @@ view: line_items {
 
   dimension: item_id {
     type: number
+    hidden:  yes
     sql: ${TABLE}.item_id ;;
   }
 
   dimension: item_variant_id {
     type: number
+    hidden: yes
     sql: ${TABLE}.item_variant_id ;;
   }
 

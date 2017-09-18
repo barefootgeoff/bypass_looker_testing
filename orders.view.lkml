@@ -40,21 +40,21 @@ view: orders {
 
   measure: count {
     type: count
-    drill_fields: [detail*]
+#     drill_fields: [detail*]
   }
 
   measure: sum_order_items{
     type:  sum
     sql: ${line_items.count} ;;
-    drill_fields: [detail*]
+#     drill_fields: [detail*]
   }
 
   # ----- Sets of fields for drilling ------
-  set: detail {
-    fields: [
-      created_date, locations.name, venues.name, count
-    ]
-  }
+#   set: detail {
+#     fields: [
+#       created_date, locations.name, venues.name, count, sum_order_items
+#     ]
+#   }
 }
 
 # dimension: authorization_credit_card_id {
