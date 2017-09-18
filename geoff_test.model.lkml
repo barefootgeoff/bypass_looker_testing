@@ -7,7 +7,7 @@ include: "*.view"
 include: "*.dashboard"
 
 explore: orders {
-  label: "Orders and Locations"
+  label: "Order - Locations, Items, Payments"
   join: locations {
     type: left_outer
     sql_on: ${orders.location_id} = ${locations.id} ;;
@@ -16,12 +16,17 @@ explore: orders {
   join: venues {
     type: left_outer
     sql_on: ${locations.venue_id} = ${venues.id} ;;
-    relationship: many_to_one
+    relationship: many_to_many
   }
   join: line_items {
     type: left_outer
     sql_on: ${line_items.order_id} = ${orders.id} ;;
     relationship: many_to_one
+  }
+  join: payments {
+    type: left_outer
+    sql_on: ${payments.order_id} = ${orders.id} ;;
+    relationship: one_to_one
   }
 }
 
