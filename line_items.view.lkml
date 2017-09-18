@@ -1,10 +1,15 @@
 view: line_items {
   sql_table_name: bypass_production.line_items ;;
 
-  dimension: id {
-    primary_key: yes
+  dimension: order_id {
     type: number
-    sql: ${TABLE}.id ;;
+    sql: ${TABLE}.order_id ;;
+  }
+
+
+  dimension: count {
+    type: number
+    sql: ${TABLE}.count ;;
   }
 
   dimension: item_id {
@@ -12,16 +17,19 @@ view: line_items {
     sql: ${TABLE}.item_id ;;
   }
 
-  dimension: order_id {
+  dimension: item_variant_id {
     type: number
-    sql: ${TABLE}.order_id ;;
+    sql: ${TABLE}.item_variant_id ;;
   }
 
-  dimension: count {
-    type: number
-    sql: ${TABLE}.count ;;
-  }
+### CURRENTLY UNUSED FIELDS
 
+#   dimension: id {
+#     primary_key: yes
+#     type: number
+#     sql: ${TABLE}.id ;;
+#   }
+#
 #   dimension: cancelled {
 #     type: yesno
 #     sql: ${TABLE}.cancelled ;;
@@ -31,7 +39,6 @@ view: line_items {
 #     type: number
 #     sql: ${TABLE}.cost ;;
 #   }
-#
 #
 #   dimension_group: created {
 #     type: time
@@ -81,17 +88,10 @@ view: line_items {
 #     sql: ${TABLE}.hold ;;
 #   }
 #
-#
-#   dimension: item_variant_id {
-#     type: number
-#     sql: ${TABLE}.item_variant_id ;;
-#   }
-#
 #   dimension: notes {
 #     type: string
 #     sql: ${TABLE}.notes ;;
 #   }
-#
 #
 #   dimension: printer_name {
 #     type: string
@@ -152,8 +152,4 @@ view: line_items {
 #     sql: ${TABLE}.uuid ;;
 #   }
 #
-#   measure: count {
-#     type: count
-#     drill_fields: [id, printer_name]
-#   }
 }
