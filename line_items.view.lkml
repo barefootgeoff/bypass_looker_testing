@@ -3,6 +3,7 @@ view: line_items {
 
   dimension: order_id {
     type: number
+    hidden: yes
     sql: ${TABLE}.order_id ;;
   }
 
@@ -26,20 +27,20 @@ view: line_items {
 
 ### MEASUREMENTS ###
 
-measure: numbers_of_items {
+measure: number_of_items {
   type: sum_distinct
   sql_distinct_key: ${order_id} ;;
   sql: ${count} ;;
-  drill_fields: [ordered_items_detail*]
+#   drill_fields: [ordered_items_detail*]
 }
 
 ### DRILL DOWNS ###
 
-  set:  ordered_items_detail{
-    fields: [
-      orders.id, numbers_of_items
-    ]
-  }
+#   set:  ordered_items_detail{
+#     fields: [
+#       orders.id, numbers_of_items
+#     ]
+#   }
 
 
 ### CURRENTLY UNUSED FIELDS
