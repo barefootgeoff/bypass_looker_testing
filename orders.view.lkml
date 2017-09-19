@@ -7,7 +7,11 @@ view: orders {
     sql: ${TABLE}.id ;;
   }
 
-
+  dimension: venue_id {
+    type: number
+    # hidden: yes
+    sql: ${TABLE}.venue_id ;;
+  }
 
   dimension_group: created {
     type: time
@@ -37,25 +41,57 @@ view: orders {
     sql: ${TABLE}.order_taker_id ;;
   }
 
+dimension: event_id {
+  type: number
+  hidden: yes
+  sql: ${TABLE}.event_id ;;
+}
+
+
+
+
+## MEASUREMENTS ##
 
   measure: count {
     type: count
-#     drill_fields: [detail*]
+    drill_fields: [order_count_detail*]
   }
 
-  measure: sum_order_items{
-    type:  sum
-    sql: ${line_items.count} ;;
-#     drill_fields: [detail*]
+#   measure: average {
+#     type: average
+#     sql: ${id} ;;
+#     drill_fields: [order_average_detail*]
+#   }
+
+
+
+
+## DRILLING ##
+
+  set: order_count_detail {
+    fields: [
+        id #this would be the order IDs listed (this is a check)
+    ]
   }
 
-  # ----- Sets of fields for drilling ------
-#   set: detail {
+#   set: order_average_detail {
 #     fields: [
-#       created_date, locations.name, venues.name, count, sum_order_items
+#       locations.name, count, average
 #     ]
 #   }
+
+#   set:  ordered_items_detail{
+#     fields: [
+#       created_date, event_id, locations.name, venues.name, count
+#     ]
+#   }
+
+
 }
+
+
+
+## UNUSED FIELDS ##
 
 # dimension: authorization_credit_card_id {
 #   type: number
@@ -168,12 +204,6 @@ view: orders {
 # dimension: email {
 #   type: string
 #   sql: ${TABLE}.email ;;
-# }
-#
-# dimension: event_id {
-#   type: number
-#   # hidden: yes
-#   sql: ${TABLE}.event_id ;;
 # }
 #
 # dimension: for_seat_delivery {
@@ -310,11 +340,6 @@ view: orders {
 #   sql: ${TABLE}.uuid ;;
 # }
 #
-# dimension: venue_id {
-#   type: number
-#   # hidden: yes
-#   sql: ${TABLE}.venue_id ;;
-# }
 #
 # dimension: version_code {
 #   type: number

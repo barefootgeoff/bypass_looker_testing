@@ -24,6 +24,24 @@ view: line_items {
     sql: ${TABLE}.item_variant_id ;;
   }
 
+### MEASUREMENTS ###
+
+measure: numbers_of_items {
+  type: sum_distinct
+  sql_distinct_key: ${order_id} ;;
+  sql: ${count} ;;
+  drill_fields: [ordered_items_detail*]
+}
+
+### DRILL DOWNS ###
+
+  set:  ordered_items_detail{
+    fields: [
+      orders.id, numbers_of_items
+    ]
+  }
+
+
 ### CURRENTLY UNUSED FIELDS
 
 #   dimension: id {

@@ -19,9 +19,10 @@ explore: orders {
     relationship: many_to_one
   }
   join: line_items {
-    type: left_outer
+    type: inner
     sql_on: ${line_items.order_id} = ${orders.id} ;;
     relationship: many_to_one
+    fields: [line_items.order_id, line_items.item_id, line_items.count]
   }
   join: payments {
     type: left_outer
