@@ -22,13 +22,24 @@ explore: orders {
     type: left_outer
     sql_on: ${line_items.order_id} = ${orders.id} ;;
     relationship: many_to_one
-    fields: [line_items.order_id, line_items.item_id, line_items.count]
+#     fields: [line_items.order_id, line_items.item_id, line_items.count]
   }
   join: payments {
     type: left_outer
     sql_on: ${payments.order_id} = ${orders.id} ;;
     relationship: one_to_one
   }
+
+  join: items {
+    type: left_outer
+    sql_on: ${line_items.item_id} = ${items.id} ;;
+    relationship: one_to_one
+  }
+
+  #     - join: orders
+#       type: left_outer
+#       sql_on: ${line_items.order_id} = ${orders.id}
+#       relationship: many_to_one
 }
 
 #   joins:

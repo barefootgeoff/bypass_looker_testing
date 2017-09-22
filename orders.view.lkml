@@ -53,9 +53,11 @@ dimension: event_id {
 ## MEASUREMENTS ##
 
   measure: count {
-    type: count
+    type: count_distinct
+    sql: ${id} ;;
     drill_fields: [order_count_detail*]
   }
+
 
 #   measure: average {
 #     type: average

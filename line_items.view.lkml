@@ -1,6 +1,13 @@
 view: line_items {
   sql_table_name: bypass_production.line_items ;;
 
+  dimension: id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.id ;;
+  }
+
+
   dimension: order_id {
     type: number
     hidden: yes
@@ -25,31 +32,32 @@ view: line_items {
     sql: ${TABLE}.item_variant_id ;;
   }
 
-### MEASUREMENTS ###
+### MEASURES ###
 
-measure: number_of_items {
-  type: sum_distinct
-  sql_distinct_key: ${order_id} ;;
-  sql: ${count} ;;
-#   drill_fields: [ordered_items_detail*]
+  measure: number_of_items_sold {
+    type: sum
+    sql: ${count} ;;
+    drill_fields: [id,line_items.count]
+  }
+
+measure: number_sold {
+  type: count
+#   sql_distinct_key: ${item_id} ;;
+#   sql: ${count} ;;
+  drill_fields: [items.name,count]
 }
 
 ### DRILL DOWNS ###
 
 #   set:  ordered_items_detail{
 #     fields: [
-#       orders.id, numbers_of_items
+#       orders.id, number_of_items_in_order
 #     ]
 #   }
 
 
-### CURRENTLY UNUSED FIELDS
 
-#   dimension: id {
-#     primary_key: yes
-#     type: number
-#     sql: ${TABLE}.id ;;
-#   }
+### CURRENTLY UNUSED FIELDS
 #
 #   dimension: cancelled {
 #     type: yesno

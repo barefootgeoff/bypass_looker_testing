@@ -1,262 +1,169 @@
 view: payments {
+
   sql_table_name: bypass_production.payments ;;
 
-  dimension: amount {
+  dimension: id {
+    primary_key: yes
     type: number
-    sql: ${TABLE}.amount ;;
+    sql: ${TABLE}.id ;;
   }
-
-  measure: count {
-    type: count
-    drill_fields: [tip_payment_id, name]
-  }
-
-  dimension: failed_amount {
-    type: number
-    sql: ${TABLE}.failed_amount ;;
-  }
-
-  dimension: last_four_digits {
-    type: string
-    sql: ${TABLE}.last_four_digits ;;
-  }
-
-  dimension: expiration {
-    type: string
-    sql: ${TABLE}.expiration ;;
-  }
-
-  dimension: tip_amount {
-    type: number
-    sql: ${TABLE}.tip_amount ;;
-  }
-
-  dimension: name {
-    type: string
-    sql: ${TABLE}.name ;;
-  }
-
   dimension: order_id {
     type: number
     sql: ${TABLE}.order_id ;;
   }
-
-  dimension: payment_type {
-    type: string
-    sql: ${TABLE}.payment_type ;;
-  }
-
-  dimension: tip_payment_id {
-    primary_key: yes
+  dimension: venue_id {
     type: number
-    sql: ${TABLE}.tip_payment_id ;;
+    hidden: yes
+    sql: ${TABLE}.venue_id ;;
+  }
+  dimension: payment_type {
+    type:  string
+    sql:  ${TABLE}.payment_type ;;
+  }
+  dimension: amount {
+    type:  number
+    sql:  ${TABLE}.amount ;;
+  }
+  dimension: refunded_amount {
+    type:  number
+    sql:  ${TABLE}.refunded_amount ;;
+  }
+  dimension: voided_amount {
+    type:  number
+    sql:  ${TABLE}.voided_amount ;;
+  }
+  dimension: card_type {
+    type:  string
+    sql:  ${TABLE}.card_type ;;
+  }
+  dimension: tip_amount {
+    type: number
+    sql:  ${TABLE}.tip_amount ;;
+  }
+  dimension: failed_amount {
+    type:  number
+    sql:  ${TABLE}.failed_amount ;;
+  }
+  dimension: state {
+    type:  string
+    sql:  ${TABLE}.state ;;
+  }
+
+  measure: sum_amount {
+    type: sum
+    sql:  ${amount};;
+    value_format_name: usd
+    drill_fields: [detail*]
+  }
+
+  measure: gross_payments {
+    type: sum
+    sql:  ${amount};;
+    value_format_name: usd
+    filters: {
+      field: state
+      value: "captured, completed, closed"
+    }
+    drill_fields: [detail*]
+  }
+
+  measure: total_tip_amount {
+    type: sum
+    sql:  ${tip_amount};;
+    value_format_name: usd
+    filters: {
+      field: state
+      value: "captured, completed, closed"
+    }
+    drill_fields: [detail*]
+  }
+
+  measure: total_payments {
+    type: number
+    value_format_name:  usd
+    sql:  ${gross_payments} + ${total_tip_amount} ;;
+    drill_fields: [individual_payment*]
+  }
+
+  # ----- Sets of fields for drilling ------
+  set: detail {
+    fields: [
+      locations.name, venues.name, sum_amount
+    ]
+  }
+
+  set: individual_payment {
+    fields: [
+      payment_type,amount,card_type,tip_amount,order_id
+    ]
   }
 
 
-# UNUSED
-#
-####
-#
-#   dimension: account_id {
-#     type: number
-#     sql: ${TABLE}.account_id ;;
+  # # You can specify the table name if it's different from the view name:
+  # sql_table_name: my_schema_name.tester ;;
+  #
+  # # Define your dimensions and measures here, like this:
+  # dimension: user_id {
+  #   description: "Unique ID for each user that has ordered"
+  #   type: number
+  #   sql: ${TABLE}.user_id ;;
+  # }
+  #
+  # dimension: lifetime_orders {
+  #   description: "The total number of orders for each user"
+  #   type: number
+  #   sql: ${TABLE}.lifetime_orders ;;
+  # }
+  #
+  # dimension_group: most_recent_purchase {
+  #   description: "The date when each user last ordered"
+  #   type: time
+  #   timeframes: [date, week, month, year]
+  #   sql: ${TABLE}.most_recent_purchase_at ;;
+  # }
+  #
+  # measure: total_lifetime_orders {
+  #   description: "Use this for counting lifetime orders across many users"
+  #   type: sum
+  #   sql: ${lifetime_orders} ;;
+  # }
+}
+
+# view: payments {
+#   # Or, you could make this view a derived table, like this:
+#   derived_table: {
+#     sql: SELECT
+#         user_id as user_id
+#         , COUNT(*) as lifetime_orders
+#         , MAX(orders.created_at) as most_recent_purchase_at
+#       FROM orders
+#       GROUP BY user_id
+#       ;;
 #   }
 #
-#   dimension: account_reference {
-#     type: string
-#     sql: ${TABLE}.account_reference ;;
-#   }
-#
-#   dimension: approval_code {
-#     type: string
-#     sql: ${TABLE}.approval_code ;;
-#   }
-#
-#   dimension: authorization_total {
-#     type: number
-#     sql: ${TABLE}.authorization_total ;;
-#   }
-#
-#   dimension: batch_id {
-#     type: string
-#     sql: ${TABLE}.batch_id ;;
-#   }
-#
-#   dimension_group: batched {
-#     type: time
-#     timeframes: [
-#       raw,
-#       time,
-#       date,
-#       week,
-#       month,
-#       quarter,
-#       year
-#     ]
-#     sql: ${TABLE}.batched_at ;;
-#   }
-#
-#   dimension: card_type {
-#     type: string
-#     sql: ${TABLE}.card_type ;;
-#   }
-#
-#   dimension: change_due {
-#     type: number
-#     sql: ${TABLE}.change_due ;;
-#   }
-#
-#   dimension_group: client_created {
-#     type: time
-#     timeframes: [
-#       raw,
-#       time,
-#       date,
-#       week,
-#       month,
-#       quarter,
-#       year
-#     ]
-#     sql: ${TABLE}.client_created_at ;;
-#   }
-#
-#   dimension: comped_amount {
-#     type: number
-#     sql: ${TABLE}.comped_amount ;;
-#   }
-#
-#   dimension_group: created {
-#     type: time
-#     timeframes: [
-#       raw,
-#       time,
-#       date,
-#       week,
-#       month,
-#       quarter,
-#       year
-#     ]
-#     sql: ${TABLE}.created_at ;;
-#   }
-#
-#   dimension: credit_card_id {
-#     type: number
-#     sql: ${TABLE}.credit_card_id ;;
-#   }
-#
-#   dimension: device_serial_number {
-#     type: string
-#     sql: ${TABLE}.device_serial_number ;;
-#   }
-#
-#   dimension: email {
-#     type: string
-#     sql: ${TABLE}.email ;;
-#   }
-#
-#
-#
-#   dimension: id {
-#     type: number
-#     sql: ${TABLE}.id ;;
-#   }
-#
-#   dimension: is_tip {
-#     type: yesno
-#     sql: ${TABLE}.is_tip ;;
-#   }
-#
-#
-#   dimension: merchant_account_id {
-#     type: number
-#     sql: ${TABLE}.merchant_account_id ;;
-#   }
-#
-#
-#   dimension: original_transaction_id {
-#     type: string
-#     sql: ${TABLE}.original_transaction_id ;;
-#   }
-#
-#   dimension: parent_payment_uuid {
-#     type: string
-#     sql: ${TABLE}.parent_payment_uuid ;;
-#   }
-#
-#
-#   dimension: processor {
-#     type: string
-#     sql: ${TABLE}.processor ;;
-#   }
-#
-#   dimension: refunded_amount {
-#     type: number
-#     sql: ${TABLE}.refunded_amount ;;
-#   }
-#
-#   dimension: state {
-#     type: string
-#     sql: ${TABLE}.state ;;
-#   }
-#
-#   dimension: status_code {
-#     type: string
-#     sql: ${TABLE}.status_code ;;
-#   }
-#
-#   dimension: status_message {
-#     type: string
-#     sql: ${TABLE}.status_message ;;
-#   }
-#
-#   dimension: stored_value_code {
-#     type: string
-#     sql: ${TABLE}.stored_value_code ;;
-#   }
-#
-#
-#   dimension: token {
-#     type: string
-#     sql: ${TABLE}.token ;;
-#   }
-#
-#   dimension: transaction_id {
-#     type: string
-#     sql: ${TABLE}.transaction_id ;;
-#   }
-#
-#   dimension: type {
-#     type: string
-#     sql: ${TABLE}.type ;;
-#   }
-#
-#   dimension_group: updated {
-#     type: time
-#     timeframes: [
-#       raw,
-#       time,
-#       date,
-#       week,
-#       month,
-#       quarter,
-#       year
-#     ]
-#     sql: ${TABLE}.updated_at ;;
-#   }
-#
+#   # Define your dimensions and measures here, like this:
 #   dimension: user_id {
+#     description: "Unique ID for each user that has ordered"
 #     type: number
 #     sql: ${TABLE}.user_id ;;
 #   }
 #
-#   dimension: uuid {
-#     type: string
-#     sql: ${TABLE}.uuid ;;
-#   }
-#
-#   dimension: voided_amount {
+#   dimension: lifetime_orders {
+#     description: "The total number of orders for each user"
 #     type: number
-#     sql: ${TABLE}.voided_amount ;;
+#     sql: ${TABLE}.lifetime_orders ;;
 #   }
 #
-}
+#   dimension_group: most_recent_purchase {
+#     description: "The date when each user last ordered"
+#     type: time
+#     timeframes: [date, week, month, year]
+#     sql: ${TABLE}.most_recent_purchase_at ;;
+#   }
+#
+#   measure: total_lifetime_orders {
+#     description: "Use this for counting lifetime orders across many users"
+#     type: sum
+#     sql: ${lifetime_orders} ;;
+#   }
+# }
