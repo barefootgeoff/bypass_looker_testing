@@ -36,6 +36,24 @@ explore: orders {
     relationship: one_to_one
   }
 
+  join: item_variants {
+    type: left_outer
+    sql_on: ${items.id} = ${item_variants.item_id} ;;
+    relationship: one_to_one
+  }
+
+  join: recipes {
+    type: left_outer
+    sql_on: ${item_variants.recipe_id} = ${recipes.id};;
+    relationship: one_to_one
+  }
+
+  join: stock_items {
+    type: left_outer
+    sql_on: ${item_variants.stock_item_id} = ${stock_items.id} ;;
+    relationship: one_to_one
+  }
+
   #     - join: orders
 #       type: left_outer
 #       sql_on: ${line_items.order_id} = ${orders.id}
