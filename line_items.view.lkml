@@ -37,15 +37,21 @@ view: line_items {
   measure: number_of_items_sold {
     type: sum
     sql: ${count} ;;
-    drill_fields: [id,line_items.count]
+    drill_fields: [id, items.name,line_items.count]
   }
 
-measure: number_sold {
-  type: count
-#   sql_distinct_key: ${item_id} ;;
-#   sql: ${count} ;;
-  drill_fields: [items.name,count]
-}
+  measure: count_of_unique_items {
+    type: count_distinct
+    sql: ${item_id} ;;
+    drill_fields: [items.id,items.name]
+  }
+
+# measure: number_sold {
+#   type: count
+# #   sql_distinct_key: ${item_id} ;;
+# #   sql: ${count} ;;
+#   drill_fields: [items.name,count]
+# }
 
 ### DRILL DOWNS ###
 

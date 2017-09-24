@@ -33,13 +33,16 @@ view: recipes {
 
   ### MEASURES ###
 
-  measure: count {
-    type: count
-    drill_fields: [id, name, item_variants.count]
+  measure: number_of_recipes {
+    type: count_distinct
+    sql: ${id} ;;
+    drill_fields: [id, name, items.name]
   }
 
-  measure: sum {
+  measure: cost_of_recipe {
     type: sum
+    sql: ${cost} ;;
+    value_format_name: usd
     drill_fields: [id,name,cost]
   }
 

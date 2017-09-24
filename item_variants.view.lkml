@@ -46,6 +46,12 @@ view: item_variants {
     drill_fields: [detail*]
   }
 
+  measure: cost_of_items {
+    type: sum_distinct
+    sql: ${cost} ;;
+    drill_fields: [line_items.id,line_items.name,cost,recipes.name,stock_items.name]
+  }
+
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [

@@ -32,8 +32,9 @@ view: items {
 
 ## MEASURES ##
   measure: count {
-    type: count
-    drill_fields: [name, alcohol]
+    type: count_distinct
+    sql: ${id} ;;
+    drill_fields: [name, alcohol,recipes.name,stock_items.name,item_variants.name]
   }
 
 
